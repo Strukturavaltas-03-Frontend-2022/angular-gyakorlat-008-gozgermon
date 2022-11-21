@@ -29,4 +29,50 @@ export class EventService {
     );
   }
 
+  create(event: Event): Observable<Event> {
+    return this.http.post<Event>(
+      `${this.eventsUrl}`,
+      event,
+    );
+  }
+
+  remove(event: Event): Observable<Event> {
+    return this.http.delete<Event>(
+      `${this.eventsUrl}/${event.id}`
+    );
+  }
+
+
+  /*************************** */
+
+  /* create(event:Event):Observable<Event>{
+      return this.http.post<Event>(
+        `${this.eventsUrl}/${event.id}`,
+        event,
+      );
+   }/*
+ 
+   /*create(event: Event): Promise<void> {
+     return new Promise((resolve, reject) => {
+       if (!event.id) {
+         this.getAll().forEach(events => {
+           let id = events[events.length - 1].id;
+           this.http.post<Observable<any>>(this.eventsUrl, event)
+             .forEach(res => {
+               resolve();
+             });
+         });
+       } else {
+         this.http.post<Observable<any>>(this.eventsUrl, event)
+           .forEach(res => {
+             resolve();
+           });
+       }
+     });
+   }/*
+ 
+   /*remove(event: any): Observable<any> {
+     event = event.id ? event.id : event;
+     return this.http.delete(`${this.eventsUrl}/${event}`);
+   } */
 }

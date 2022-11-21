@@ -8,6 +8,12 @@
     </div>
   </div>
 
+  <div class="btn-group">
+    <button  [routerLink]="['event/0']" (click)="onUpdate()" class="btn btn-success btn-lg">
+      <i class="fa fa-pencil"></i>
+    </button>
+
+  </div>
   <table class="table">
     <thead>
       <tr>
@@ -28,6 +34,9 @@
           <div class="btn-group">
             <button [routerLink]="['event/' + event.id]" class="btn btn-info">
               <i class="fa fa-pencil"></i>
+            </button>
+            <button (click)="onDeleteClick(event)" class="btn btn-danger">
+              <i class="fa fa-trash"></i>
             </button>
 
           </div>

@@ -13,11 +13,17 @@ export class EventsListComponent implements OnInit {
 
   eventList$: Observable<Event[]> = this.eventService.getAll();
 
-  constructor(
-    private eventService: EventService,
-    private router: Router,
-  ) { }
+  constructor( private eventService: EventService) { }
 
   ngOnInit(): void {}
 
+  onDeleteClick(event:Event){
+    this.eventService.remove(event)
+  }
+
+  onUpdate(){
+  /*  if(event.id===0){
+      this.eventService.create(event)
+    }*/
+  }
 }
