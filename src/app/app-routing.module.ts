@@ -12,6 +12,10 @@ const routes: Routes = [
     path: 'event/:id',
     component: EventEditorComponent,
   },
+  {
+    path: 'event/0',
+    component: EventEditorComponent,
+  },
 ];
 
 @NgModule({

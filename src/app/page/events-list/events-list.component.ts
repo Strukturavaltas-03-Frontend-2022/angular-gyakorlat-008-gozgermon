@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Event } from 'src/app/model/event';
@@ -13,17 +14,16 @@ export class EventsListComponent implements OnInit {
 
   eventList$: Observable<Event[]> = this.eventService.getAll();
 
-  constructor( private eventService: EventService) { }
+  constructor( 
+    private eventService: EventService,
+    private router: Router,) { }
 
   ngOnInit(): void {}
 
   onDeleteClick(event:Event){
-    this.eventService.remove(event)
+    this.eventService.remove(event).subscribe(()=>{
+    this.eventList$=this.eventService.getAll()})
   }
 
-  onUpdate(){
-  /*  if(event.id===0){
-      this.eventService.create(event)
-    }*/
-  }
-}
+ 
+} 
