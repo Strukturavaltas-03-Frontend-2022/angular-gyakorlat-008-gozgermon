@@ -40,9 +40,9 @@ export class EventService {
     );
   }
 
-  remove(event: Event): Observable<Event> {
+  remove(eventID: number): Observable<Event> {
     return this.http.delete<Event>(
-      `${this.eventsUrl}/${event.id}`
+      `${this.eventsUrl}/${eventID}`
     );
   }
 }

@@ -11,16 +11,16 @@
       <div class="form-group">
         <label for="">Date</label>
         <input name="date" [(ngModel)]="event.date" type="text" class="form-control"
-          pattern="^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$" required>
+          pattern="^(0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])[\/\-]\d{4}$" required>
         <div [hidden]="eventForm.controls.date?.valid" class="error-message">
-            The date of the event must be day/month/year!
+            The date of the event must be month/day/year!
         </div>
       </div>
       <div class="form-group">
         <label for="">Time</label>
-        <input name="time" [(ngModel)]="event.time" type="text" class="form-control" pattern="^[0-9 :]{1,4} [AMP]{2}$" required>
+        <input name="time" [(ngModel)]="event.time" type="text" class="form-control" pattern="^(0?0|0?1|0?2|0?3|0?4|0?5|0?6|0?7|0?8|0?9|10|11|12):[0-5][0-9] [AP]M$" required>
         <div [hidden]="eventForm.controls.time?.valid" class="error-message">
-          TEh time format must be '0:0 PM or 0:0 AM'
+          TEh time format must be '00:00 PM or 00:00 AM'
         </div>
       </div>
       <div class="form-group">

@@ -773,9 +773,9 @@
     }
   }
   function patchEventPrototype(global2, api) {
-    const Event = global2["Event"];
-    if (Event && Event.prototype) {
-      api.patchMethod(Event.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
+    const Event2 = global2["Event"];
+    if (Event2 && Event2.prototype) {
+      api.patchMethod(Event2.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
         self2[IMMEDIATE_PROPAGATION_SYMBOL] = true;
         delegate && delegate.apply(self2, args);
       });
@@ -42993,6 +42993,22 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
     }
   });
 
+  // src/app/model/event.ts
+  var Event;
+  var init_event = __esm({
+    "src/app/model/event.ts"() {
+      Event = class {
+        constructor() {
+          this.id = 0;
+          this.name = "";
+          this.date = "";
+          this.time = "";
+          this.location = "";
+        }
+      };
+    }
+  });
+
   // src/app/service/event.service.ts
   var EventService;
   var init_event_service = __esm({
@@ -43000,6 +43016,8 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
       init_core();
       init_http();
       init_core();
+      init_esm5();
+      init_event();
       EventService = class {
         constructor(http) {
           this.http = http;
@@ -43009,16 +43027,21 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
           return this.http.get(this.eventsUrl);
         }
         get(id) {
+          if (id == 0) {
+            return new Observable((observer) => {
+              observer.next(new Event());
+            });
+          }
           return this.http.get(`${this.eventsUrl}/${id}`);
         }
         update(event) {
           return this.http.patch(`${this.eventsUrl}/${event.id}`, event);
         }
         create(event) {
-          return this.http.post(this.eventsUrl, event);
+          return this.http.post(`${this.eventsUrl}`, event);
         }
-        remove(id) {
-          return this.http.delete(`${this.eventsUrl}/${id}`);
+        remove(eventID) {
+          return this.http.delete(`${this.eventsUrl}/${eventID}`);
         }
       };
       EventService = __decorateClass([
@@ -43283,51 +43306,54 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
   var events_list_component_default;
   var init_events_list_component = __esm({
     "src/app/page/events-list/events-list.component.html"() {
-      events_list_component_default = `<div>\r
-  <div class="row my-2">\r
-    <div class="col-10">\r
-      <h3>All of the events should show below</h3>\r
-    </div>\r
-    <div class="col-2 text-right">\r
-      <button [routerLink]="['event/' + 0]" class="btn btn-success btn-block">\r
-        <i class="fa fa-plus"></i>\r
-      </button>\r
-    </div>\r
-  </div>\r
-\r
-  <table class="table">\r
-    <thead>\r
-      <tr>\r
-        <th>Event</th>\r
-        <th>Date</th>\r
-        <th>Time</th>\r
-        <th>Address</th>\r
-        <th></th>\r
-      </tr>\r
-    </thead>\r
-    <tbody>\r
-      <tr *ngFor="let event of eventList$ | async">\r
-        <td>{{event.name}}</td>\r
-        <td>{{event.date}} </td>\r
-        <td>{{event.time}}</td>\r
-        <td>{{event.location.address}}, {{event.location.city}},\r
-          {{event.location.country}}</td>\r
-        <td>\r
-          <div class="btn-group">\r
-            <button [routerLink]="['event/' + event.id]" class="btn btn-info">\r
-              <i class="fa fa-pencil"></i>\r
-            </button>\r
-            <button (click)="onDelete(event.id)" class="btn btn-danger"\r
-              type="button">\r
-              <i class="fa fa-trash"></i>\r
-            </button>\r
-          </div>\r
-        </td>\r
-      </tr>\r
-    </tbody>\r
-  </table>\r
-\r
-</div>\r
+      events_list_component_default = `<div>
+  <div class="row my-2">
+    <div class="col-10">
+      <h3>All of the events should show below</h3>
+    </div>
+    <div class="col-2 text-right">
+
+    </div>
+  </div>
+
+  <div class="btn-group">
+    <button  [routerLink]="['event/0']" class="btn btn-success btn-lg">
+      <i class="fa fa-pencil">New event</i>
+    </button>
+
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Address</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let event of eventList$ | async">
+        <td>{{event.name}}</td>
+        <td>{{event.date}} </td>
+        <td>{{event.time}}</td>
+        <td>{{event.location}}</td>
+        <td>
+          <div class="btn-group">
+            <button [routerLink]="['event/' + event.id]" class="btn btn-info">
+              <i class="fa fa-pencil"></i>
+            </button>
+            <button (click)="onDelete(event)" class="btn btn-danger">
+              <i class="fa fa-trash"></i>
+            </button>
+
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
 `;
     }
   });
@@ -47240,14 +47266,10 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
         }
         ngOnInit() {
         }
-        onDelete(id) {
-          this.eventService.remove(id).subscribe((ev) => this.router.navigate([""]));
-        }
-        onUpdate(event) {
-          if (event.id === 0) {
-            this.eventService.create(event);
-          }
-          this.eventService.update(event);
+        onDelete(event) {
+          this.eventService.remove(event.id).subscribe(() => {
+            this.eventList$ = this.eventService.getAll();
+          });
         }
       };
       EventsListComponent = __decorateClass([

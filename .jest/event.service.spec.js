@@ -2179,9 +2179,9 @@
     }
   }
   function patchEventPrototype(global2, api) {
-    const Event = global2["Event"];
-    if (Event && Event.prototype) {
-      api.patchMethod(Event.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
+    const Event2 = global2["Event"];
+    if (Event2 && Event2.prototype) {
+      api.patchMethod(Event2.prototype, "stopImmediatePropagation", (delegate) => function(self2, args) {
         self2[IMMEDIATE_PROPAGATION_SYMBOL] = true;
         delegate && delegate.apply(self2, args);
       });
@@ -42145,6 +42145,17 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
     }]
   }] });
 
+  // src/app/model/event.ts
+  var Event = class {
+    constructor() {
+      this.id = 0;
+      this.name = "";
+      this.date = "";
+      this.time = "";
+      this.location = "";
+    }
+  };
+
   // src/app/service/event.service.ts
   var EventService = class {
     constructor(http) {
@@ -42155,16 +42166,21 @@ If '${name}' is a directive input, make sure the directive is imported by the cu
       return this.http.get(this.eventsUrl);
     }
     get(id) {
+      if (id == 0) {
+        return new Observable((observer) => {
+          observer.next(new Event());
+        });
+      }
       return this.http.get(`${this.eventsUrl}/${id}`);
     }
     update(event) {
       return this.http.patch(`${this.eventsUrl}/${event.id}`, event);
     }
     create(event) {
-      return this.http.post(this.eventsUrl, event);
+      return this.http.post(`${this.eventsUrl}`, event);
     }
-    remove(id) {
-      return this.http.delete(`${this.eventsUrl}/${id}`);
+    remove(eventID) {
+      return this.http.delete(`${this.eventsUrl}/${eventID}`);
     }
   };
   EventService = __decorateClass([
